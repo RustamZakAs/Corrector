@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Corrector.Properties;
 using ExcelDataReader;
-using Excel = Microsoft.Office.Interop.Excel;
 
 namespace Corrector
 {
@@ -25,50 +21,51 @@ namespace Corrector
             set
             {
                 isRunning = value;
-                _ = Task.Run(()=> {
+                _ = Task.Run(() =>
+                {
                     int count = 10;
                     do
                     {
-                        if (!this.label1.InvokeRequired)
+                        if (!label1.InvokeRequired)
                         {
-                            this.label1.Text += ".";
+                            label1.Text += ".";
                             Thread.Sleep(200);
                         }
                         else
                         {
-                            this.label1.Invoke(new Action(() =>
+                            label1.Invoke(new Action(() =>
                             {
-                                this.label1.Text += ".";
+                                label1.Text += ".";
                                 Thread.Sleep(200);
                             }));
                         }
 
                         if (--count <= 0)
                         {
-                            if (!this.label1.InvokeRequired)
+                            if (!label1.InvokeRequired)
                             {
-                                this.label1.Text = "";
+                                label1.Text = "";
                             }
                             else
                             {
-                                this.label1.Invoke(new Action(() =>
+                                label1.Invoke(new Action(() =>
                                 {
-                                    this.label1.Text = "";
+                                    label1.Text = "";
                                 }));
                             }
                             count = 10;
                         }
                     } while (isRunning);
 
-                    if (!this.label1.InvokeRequired)
+                    if (!label1.InvokeRequired)
                     {
-                        this.label1.Text = "";
+                        label1.Text = "";
                     }
                     else
                     {
-                        this.label1.Invoke(new Action(() =>
+                        label1.Invoke(new Action(() =>
                         {
-                            this.label1.Text = "";
+                            label1.Text = "";
                         }));
                     }
                 });
@@ -81,11 +78,11 @@ namespace Corrector
         {
             InitializeComponent();
 
-            this.gcEDocs.DataSource = new List<EDoc>();
+            gcEDocs.DataSource = new List<EDoc>();
 
-            var col = gridView1.Columns.ToList().FirstOrDefault(x => x.FieldName == nameof(EDoc.ToStringCSV));
+            DevExpress.XtraGrid.Columns.GridColumn col = gridView1.Columns.ToList().FirstOrDefault(x => x.FieldName == nameof(EDoc.ToStringCSV));
             if (col != null) col.Visible = false;
-                col = gridView1.Columns.ToList().FirstOrDefault(x => x.FieldName == nameof(EDoc.ToStringColumnsCSV));
+            col = gridView1.Columns.ToList().FirstOrDefault(x => x.FieldName == nameof(EDoc.ToStringColumnsCSV));
             if (col != null) col.Visible = false;
         }
 
@@ -93,23 +90,24 @@ namespace Corrector
 
         private void Form1_Resize(object sender, EventArgs e)
         {
-            this.button3.Left = (this.Width / 2) - this.button3.Width;
+            button3.Left = (Width / 2) - button3.Width;
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            _ = Task.Run(() => {
+            _ = Task.Run(() =>
+            {
                 IsRunning = true;
 
-                if (!this.button3.InvokeRequired)
-                    this.button3.Enabled = false;
+                if (!button3.InvokeRequired)
+                    button3.Enabled = false;
                 else
-                    this.button3.Invoke(new Action(() => { this.button3.Enabled = false; }));
+                    button3.Invoke(new Action(() => { button3.Enabled = false; }));
 
-                decimal sum = Math.Round(this.edocs.Sum(x => x.PayVAT) / 0.18M, 2);
-                foreach (var item in this.edocs)
+                decimal sum = Math.Round(edocs.Sum(x => x.PayVAT) / 0.18M, 2);
+                foreach (EDoc item in edocs)
                 {
-                    if (this.edocs.Sum(x => x.PayMain) == sum)
+                    if (edocs.Sum(x => x.PayMain) == sum)
                     {
                         break;
                     }
@@ -121,13 +119,13 @@ namespace Corrector
                         item.Corrected = true;
                     }
                 }
-                this.gcEDocs.RefreshDataSource();
-                if (!this.button3.InvokeRequired)
-                    this.button3.Enabled = true;
+                gcEDocs.RefreshDataSource();
+                if (!button3.InvokeRequired)
+                    button3.Enabled = true;
                 else
-                    this.button3.Invoke(new Action(() => { this.button3.Enabled = true; }));
+                    button3.Invoke(new Action(() => { button3.Enabled = true; }));
                 IsRunning = false;
-                MessageBox.Show(this.Text + " düzəliş sona çatdı!", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(Text + " düzəliş sona çatdı!", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             });
         }
 
@@ -135,21 +133,22 @@ namespace Corrector
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                this.cmsTo.Show(Cursor.Position);
+                cmsTo.Show(Cursor.Position);
             }
         }
 
         private void toCSVFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _ = Task.Run(() => {
+            _ = Task.Run(() =>
+            {
                 try
                 {
                     IsRunning = true;
 
-                    if (!this.button3.InvokeRequired)
-                        this.button2.Enabled = false;
+                    if (!button3.InvokeRequired)
+                        button2.Enabled = false;
                     else
-                        this.button2.Invoke(new Action(() => { this.button2.Enabled = false; }));
+                        button2.Invoke(new Action(() => { button2.Enabled = false; }));
 
                     string fileName = "EDocs_" + Guid.NewGuid().ToString("N").Substring(0, 4) + ".csv";
                     string location = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -158,23 +157,23 @@ namespace Corrector
                     using (StreamWriter sw = File.CreateText(customExcelSavingPath))
                     {
                         sw.WriteLine(EDoc.ToStringColumnsCSV());
-                        for (int i = 0; i < this.edocs.Count; i++)
+                        for (int i = 0; i < edocs.Count; i++)
                         {
-                            sw.WriteLine(this.edocs[i].ToStringCSV());
+                            sw.WriteLine(edocs[i].ToStringCSV());
                         }
                     }
 
-                    if (!this.button3.InvokeRequired)
-                        this.button2.Enabled = true;
+                    if (!button3.InvokeRequired)
+                        button2.Enabled = true;
                     else
-                        this.button2.Invoke(new Action(() => { this.button2.Enabled = true; }));
+                        button2.Invoke(new Action(() => { button2.Enabled = true; }));
 
                     IsRunning = false;
-                    MessageBox.Show("Fayl: " + customExcelSavingPath + "", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show("Fayl: " + customExcelSavingPath + "", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex?.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(ex?.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             });
         }
@@ -197,7 +196,7 @@ namespace Corrector
             // Adding Row and its value to our dataTable
             foreach (T item in models)
             {
-                var values = new object[Props.Length];
+                object[] values = new object[Props.Length];
                 for (int i = 0; i < Props.Length; i++)
                 {
                     //inserting property values to datatable rows  
@@ -211,14 +210,15 @@ namespace Corrector
 
         private void toExcelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _ = Task.Run(() => {
+            _ = Task.Run(() =>
+            {
                 try
                 {
                     IsRunning = true;
-                    if (!this.button3.InvokeRequired)
-                        this.button2.Enabled = false;
+                    if (!button3.InvokeRequired)
+                        button2.Enabled = false;
                     else
-                        this.button2.Invoke(new Action(() => { this.button2.Enabled = false; }));
+                        button2.Invoke(new Action(() => { button2.Enabled = false; }));
 
                     string fileName = "EDocs_" + Guid.NewGuid().ToString("N").Substring(0, 4) + ".xlsx";
                     string location = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
@@ -226,16 +226,16 @@ namespace Corrector
 
                     ExcelExport.GenerateExcel(ConvertToDataTable(edocs), customExcelSavingPath);
 
-                    if (!this.button3.InvokeRequired)
-                        this.button2.Enabled = true;
+                    if (!button3.InvokeRequired)
+                        button2.Enabled = true;
                     else
-                        this.button2.Invoke(new Action(() => { this.button2.Enabled = true; }));
+                        button2.Invoke(new Action(() => { button2.Enabled = true; }));
                     IsRunning = false;
-                    MessageBox.Show("Fayl: " + customExcelSavingPath + "", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    MessageBox.Show("Fayl: " + customExcelSavingPath + "", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex?.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(ex?.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             });
         }
@@ -244,7 +244,7 @@ namespace Corrector
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                this.cmsFrom.Show(Cursor.Position);
+                cmsFrom.Show(Cursor.Position);
             }
         }
 
@@ -257,7 +257,7 @@ namespace Corrector
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     IsRunning = true;
-                    this.button1.Enabled = false;
+                    button1.Enabled = false;
                     try
                     {
                         string filePath = openFileDialog.FileName;
@@ -327,16 +327,16 @@ namespace Corrector
                             }
                         }
 
-                        this.gcEDocs.DataSource = edocs;
-                        this.gcEDocs.RefreshDataSource();
-                        this.lblCount.Text = "Sətir sayı: " + edocs.Count.ToString();
-                        this.button1.Enabled = true;
+                        gcEDocs.DataSource = edocs;
+                        gcEDocs.RefreshDataSource();
+                        lblCount.Text = "Sətir sayı: " + edocs.Count.ToString();
+                        button1.Enabled = true;
                         IsRunning = false;
-                        MessageBox.Show(this, this.Text + " yüklənməsi sona çatdı!", this.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                        MessageBox.Show(this, Text + " yüklənməsi sona çatdı!", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(this, ex?.Message + "\n" + ex?.InnerException?.Message, this.Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(this, ex?.Message + "\n" + ex?.InnerException?.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                         throw;
                     }
@@ -350,36 +350,36 @@ namespace Corrector
 
         private void toXMLFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.tbTIN.Text.Length != 10)
+            if (tbTIN.Text.Length != 10)
             {
-                this.panel1.Visible = true;
-                this.tbTIN.Focus();
+                panel1.Visible = true;
+                tbTIN.Focus();
                 MessageBox.Show("VÖEN səhfdir!");
             }
-            int.TryParse(this.tbYear.Text, out int year);
-            if (this.tbYear.Text.Length != 4 || year <= 2010)
+            int.TryParse(tbYear.Text, out int year);
+            if (tbYear.Text.Length != 4 || year <= 2010)
             {
-                this.panel1.Visible = true;
-                this.tbYear.Focus();
+                panel1.Visible = true;
+                tbYear.Focus();
                 MessageBox.Show("İl səhfdir!");
             }
-            if (this.cbeMonth.SelectedIndex < 0)
+            if (cbeMonth.SelectedIndex < 0)
             {
-                this.panel1.Visible = true;
-                this.cbeMonth.Focus();
+                panel1.Visible = true;
+                cbeMonth.Focus();
                 MessageBox.Show("Ay seçilməyib!");
             }
             string main = string.Empty;
             string hat = Resources.Hat;
             main += hat;
             main += "\n<product>";
-            main += "\n<voen>" + this.tbTIN.Text + "</voen>";
-            main += "\n<dovr>" + year.ToString() + (this.cbeMonth.SelectedIndex + 1).ToString("00") + year.ToString() + (this.cbeMonth.SelectedIndex + 1).ToString("00") + "</dovr>";
+            main += "\n<voen>" + tbTIN.Text + "</voen>";
+            main += "\n<dovr>" + year.ToString() + (cbeMonth.SelectedIndex + 1).ToString("00") + year.ToString() + (cbeMonth.SelectedIndex + 1).ToString("00") + "</dovr>";
             main += "\n<ma></ma>";
             main += "\n<mk></mk>";
             main += "\n\t\t<vhfEVEZTable>\n";
             int counter = 0;
-            foreach (var item in edocs)
+            foreach (EDoc item in edocs)
             {
                 main += "\t\t\t" + $@"<row no = '{counter++}'>
 				               <ser>{item.Serial}</ser>
@@ -387,8 +387,8 @@ namespace Corrector
 				               <date>{item.Date.Day.ToString("00")}{item.Date.Month.ToString("00")}{item.Date.Year}</date>
 				               <fv>{item.TIN}</fv>
 				               <kod>{item.RowCode}</kod>
-				               <dovr>{(this.cbeMonth.SelectedIndex + 1).ToString("00")}{year}</dovr>
-				               <uMeb>{Math.Round(item.DocMain, 2).ToString().Replace(",",".")}</uMeb>
+				               <dovr>{(cbeMonth.SelectedIndex + 1).ToString("00")}{year}</dovr>
+				               <uMeb>{Math.Round(item.DocMain, 2).ToString().Replace(",", ".")}</uMeb>
 				               <uEdv>{Math.Round(item.DocVAT, 2).ToString().Replace(",", ".")}</uEdv>
 				               <oMeb>{Math.Round(item.PayMain, 2).ToString().Replace(",", ".")}</oMeb>
 				               <oEdv>{Math.Round(item.PayVAT, 2).ToString().Replace(",", ".")}</oEdv>
@@ -398,7 +398,7 @@ namespace Corrector
             main += "\n\t</product>";
             main += "\n</root>";
 
-            string fileName = $@"C_VHF_EVEZ_1_{this.tbTIN.Text}_{DateTime.Now.ToString("yyyyMMdd")}_v_205_{Guid.NewGuid().ToString("N").Substring(0, 4)}.xml";
+            string fileName = $@"C_VHF_EVEZ_1_{tbTIN.Text}_{DateTime.Now.ToString("yyyyMMdd")}_v_205_{Guid.NewGuid().ToString("N").Substring(0, 4)}.xml";
             string location = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string customExcelSavingPath = location + "\\" + fileName;
 
@@ -407,7 +407,7 @@ namespace Corrector
 
         private void button4_Click(object sender, EventArgs e)
         {
-            this.panel1.Visible = !this.panel1.Visible;
+            panel1.Visible = !panel1.Visible;
         }
     }
 }
