@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Corrector
 {
-    class EDoc
+    public class EDoc
     {
         public string TIN { get; internal set; }
         public string Name { get; internal set; }
@@ -16,17 +16,20 @@ namespace Corrector
         public string Number { get; internal set; }
         public string RowCode { get; internal set; }
         public decimal DocMain { get; internal set; }
-        public decimal DocEDV { get; internal set; }
+        public decimal DocVAT { get; internal set; }
         public decimal DocSum { get; internal set; }
         public decimal PayMain { get; internal set; }
-        public decimal PayEDV { get; internal set; }
+        public decimal PayVAT { get; internal set; }
         public decimal PaySum { get; internal set; }
         public bool Corrected { get; internal set; }
 
-        public string ToStringCSV
+        public static string ToStringColumnsCSV()
         {
-            get { return TIN + "|" + Name + "|" + Date.Date.ToShortDateString() + "|" +  Serial + "|" + Number + "|" + DocMain + "|" + DocEDV + "|" + DocSum + "|" + PayMain + "|" + PayEDV + "|" + PaySum + "|" + RowCode + "|" + Corrected; }
+            return nameof(TIN) + "|" + nameof(Name) + "|" + nameof(Date) + "|" + nameof(Serial) + "|" + nameof(Number) + "|" + nameof(DocMain) + "|" + nameof(DocVAT) + "|" + nameof(DocSum) + "|" + nameof(PayMain) + "|" + nameof(PayVAT) + "|" + nameof(PaySum) + "|" + nameof(RowCode) + "|" + nameof(Corrected);
         }
-
+        public string ToStringCSV()
+        {
+            return TIN + "|" + Name + "|" + Date.Date.ToShortDateString() + "|" + Serial + "|" + Number + "|" + DocMain + "|" + DocVAT + "|" + DocSum + "|" + PayMain + "|" + PayVAT + "|" + PaySum + "|" + RowCode + "|" + Corrected;
+        }
     }
 }

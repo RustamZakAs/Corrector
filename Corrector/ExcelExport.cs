@@ -33,13 +33,20 @@ namespace Corrector
                 }
 
                 // add all the rows
+                bool isNumeric;
                 for (int j = 0; j < table.Rows.Count; j++)
                 {
                     for (int k = 0; k < table.Columns.Count; k++)
                     {
+                        isNumeric = int.TryParse(table.Rows[j].ItemArray[k].ToString(), out _);
+                        if (isNumeric)
+                        {
+                            excelWorkSheet.Cells[j + 2, k + 1].NumberFormat = "@";
+                        }
                         excelWorkSheet.Cells[j + 2, k + 1] = table.Rows[j].ItemArray[k].ToString();
                     }
                 }
+                excelWorkSheet.Columns["A:Z"].AutoFit();
             }
             excelWorkBook.SaveAs(path);
             excelWorkBook.Close();
