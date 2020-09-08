@@ -104,7 +104,10 @@ namespace Corrector
                 else
                     button3.Invoke(new Action(() => { button3.Enabled = false; }));
 
-                decimal sum = Math.Round(edocs.Sum(x => x.PayVAT) / 0.18M, 2);
+                decimal sum = 0M;
+                if (this.nudSum.Value == 0)
+                    sum = Math.Round(edocs.Sum(x => x.PayVAT) / 0.18M, 2);
+                else sum = this.nudSum.Value;
                 foreach (EDoc item in edocs)
                 {
                     if (edocs.Sum(x => x.PayMain) == sum)
@@ -350,31 +353,31 @@ namespace Corrector
 
         private void toXMLFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (tbTIN.Text.Length != 10)
+            if (this.tbTIN.Text.Length != 10)
             {
-                panel1.Visible = true;
-                tbTIN.Focus();
+                this.panel1.Visible = true;
+                this.tbTIN.Focus();
                 MessageBox.Show("VÖEN səhfdir!");
             }
-            int.TryParse(tbYear.Text, out int year);
-            if (tbYear.Text.Length != 4 || year <= 2010)
+            int.TryParse(this.tbYear.Text, out int year);
+            if (this.tbYear.Text.Length != 4 || year <= 2010)
             {
-                panel1.Visible = true;
-                tbYear.Focus();
+                this.panel1.Visible = true;
+                this.tbYear.Focus();
                 MessageBox.Show("İl səhfdir!");
             }
-            if (cbeMonth.SelectedIndex < 0)
+            if (this.cbeMonth.SelectedIndex < 0)
             {
-                panel1.Visible = true;
-                cbeMonth.Focus();
+                this.panel1.Visible = true;
+                this.cbeMonth.Focus();
                 MessageBox.Show("Ay seçilməyib!");
             }
             string main = string.Empty;
             string hat = Resources.Hat;
             main += hat;
             main += "\n<product>";
-            main += "\n<voen>" + tbTIN.Text + "</voen>";
-            main += "\n<dovr>" + year.ToString() + (cbeMonth.SelectedIndex + 1).ToString("00") + year.ToString() + (cbeMonth.SelectedIndex + 1).ToString("00") + "</dovr>";
+            main += "\n<voen>" + this.tbTIN.Text + "</voen>";
+            main += "\n<dovr>" + year.ToString() + (this.cbeMonth.SelectedIndex + 1).ToString("00") + year.ToString() + (this.cbeMonth.SelectedIndex + 1).ToString("00") + "</dovr>";
             main += "\n<ma></ma>";
             main += "\n<mk></mk>";
             main += "\n\t\t<vhfEVEZTable>\n";
@@ -387,7 +390,7 @@ namespace Corrector
 				               <date>{item.Date.Day.ToString("00")}{item.Date.Month.ToString("00")}{item.Date.Year}</date>
 				               <fv>{item.TIN}</fv>
 				               <kod>{item.RowCode}</kod>
-				               <dovr>{(cbeMonth.SelectedIndex + 1).ToString("00")}{year}</dovr>
+				               <dovr>{(this.cbeMonth.SelectedIndex + 1).ToString("00")}{year}</dovr>
 				               <uMeb>{Math.Round(item.DocMain, 2).ToString().Replace(",", ".")}</uMeb>
 				               <uEdv>{Math.Round(item.DocVAT, 2).ToString().Replace(",", ".")}</uEdv>
 				               <oMeb>{Math.Round(item.PayMain, 2).ToString().Replace(",", ".")}</oMeb>
@@ -398,7 +401,7 @@ namespace Corrector
             main += "\n\t</product>";
             main += "\n</root>";
 
-            string fileName = $@"C_VHF_EVEZ_1_{tbTIN.Text}_{DateTime.Now.ToString("yyyyMMdd")}_v_205_{Guid.NewGuid().ToString("N").Substring(0, 4)}.xml";
+            string fileName = $@"C_VHF_EVEZ_1_{this.tbTIN.Text}_{DateTime.Now.ToString("yyyyMMdd")}_v_205_{Guid.NewGuid().ToString("N").Substring(0, 4)}.xml";
             string location = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
             string customExcelSavingPath = location + "\\" + fileName;
 
@@ -408,6 +411,16 @@ namespace Corrector
         private void button4_Click(object sender, EventArgs e)
         {
             panel1.Visible = !panel1.Visible;
+        }
+
+        private void fromDBToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void toDBToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

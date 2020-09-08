@@ -52,6 +52,8 @@
             this.tbTIN = new System.Windows.Forms.TextBox();
             this.button4 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.fromDBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toDBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsFrom.SuspendLayout();
             this.cmsTo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gcEDocs)).BeginInit();
@@ -76,14 +78,15 @@
             // cmsFrom
             // 
             this.cmsFrom.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem2});
+            this.toolStripMenuItem2,
+            this.fromDBToolStripMenuItem});
             this.cmsFrom.Name = "cmsFrom";
-            this.cmsFrom.Size = new System.Drawing.Size(133, 26);
+            this.cmsFrom.Size = new System.Drawing.Size(133, 48);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(132, 22);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
             this.toolStripMenuItem2.Text = "From Excel";
             this.toolStripMenuItem2.Click += new System.EventHandler(this.toolStripMenuItem2_Click);
             // 
@@ -104,9 +107,10 @@
             this.cmsTo.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toCSVFileToolStripMenuItem,
             this.toExcelToolStripMenuItem,
-            this.toXMLFileToolStripMenuItem});
+            this.toXMLFileToolStripMenuItem,
+            this.toDBToolStripMenuItem});
             this.cmsTo.Name = "contextMenuStrip1";
-            this.cmsTo.Size = new System.Drawing.Size(136, 70);
+            this.cmsTo.Size = new System.Drawing.Size(181, 114);
             // 
             // toCSVFileToolStripMenuItem
             // 
@@ -288,6 +292,20 @@
             this.label1.Size = new System.Drawing.Size(149, 23);
             this.label1.TabIndex = 5;
             // 
+            // fromDBToolStripMenuItem
+            // 
+            this.fromDBToolStripMenuItem.Name = "fromDBToolStripMenuItem";
+            this.fromDBToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.fromDBToolStripMenuItem.Text = "From DB";
+            this.fromDBToolStripMenuItem.Click += new System.EventHandler(this.fromDBToolStripMenuItem_Click);
+            // 
+            // toDBToolStripMenuItem
+            // 
+            this.toDBToolStripMenuItem.Name = "toDBToolStripMenuItem";
+            this.toDBToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.toDBToolStripMenuItem.Text = "To DB";
+            this.toDBToolStripMenuItem.Click += new System.EventHandler(this.toDBToolStripMenuItem_Click);
+            // 
             // FormCorrector
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -343,6 +361,8 @@
         private System.Windows.Forms.TextBox tbTIN;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ToolStripMenuItem fromDBToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toDBToolStripMenuItem;
     }
 }
 
