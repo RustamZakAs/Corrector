@@ -79,6 +79,7 @@ namespace Corrector
         public FormCorrector()
         {
             InitializeComponent();
+            this.nudSum.Controls[0].Enabled = !this.nudSum.ReadOnly;
 
             gcEDocs.DataSource = new List<EDoc>();
 
@@ -336,6 +337,9 @@ namespace Corrector
                         gcEDocs.DataSource = edocs;
                         gcEDocs.RefreshDataSource();
                         lblCount.Text = "Sətir sayı: " + edocs.Count.ToString();
+
+                        this.nudSum.Value = Math.Round(edocs.Sum(x => x.PayVAT) / 0.18M, 2);
+
                         this.button1.Enabled = true;
                         IsRunning = false;
                         MessageBox.Show(this, Text + " yüklənməsi sona çatdı!", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -431,6 +435,12 @@ namespace Corrector
 
         private void fromDBToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (this.tbYear.Text.Trim().Length != 4 || this.cbeMonth.SelectedIndex < 0)
+            {
+                this.panel1.Visible = true;
+                return;
+            }
+
             int year = Convert.ToInt32(this.tbYear.Text);
             int month = this.cbeMonth.SelectedIndex;
 
@@ -473,6 +483,9 @@ namespace Corrector
                     gcEDocs.DataSource = edocs;
                     gcEDocs.RefreshDataSource();
                     lblCount.Text = "Sətir sayı: " + edocs.Count.ToString();
+
+                    this.nudSum.Value = Math.Round(edocs.Sum(x => x.PayVAT) / 0.18M, 2);
+
                     this.button1.Enabled = true;
                     IsRunning = false;
                     MessageBox.Show(this, Text + " yüklənməsi sona çatdı!", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -542,6 +555,11 @@ namespace Corrector
             lblCount.Text = "Sətir sayı: " + edocs.Count.ToString();
             this.button1.Enabled = true;
             IsRunning = false;
+        }
+
+        private void gcEDocs_Click(object sender, EventArgs e)
+        {
+            this.panel1.Visible = false;
         }
     }
 }
