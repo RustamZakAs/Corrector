@@ -32,11 +32,13 @@
             this.button1 = new System.Windows.Forms.Button();
             this.cmsFrom = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.fromDBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.button2 = new System.Windows.Forms.Button();
             this.cmsTo = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toCSVFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toExcelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toXMLFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toDBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gcEDocs = new DevExpress.XtraGrid.GridControl();
             this.gridView1 = new DevExpress.XtraGrid.Views.Grid.GridView();
             this.button3 = new System.Windows.Forms.Button();
@@ -52,8 +54,7 @@
             this.tbTIN = new System.Windows.Forms.TextBox();
             this.button4 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.fromDBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toDBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnClear = new System.Windows.Forms.Button();
             this.cmsFrom.SuspendLayout();
             this.cmsTo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gcEDocs)).BeginInit();
@@ -81,14 +82,21 @@
             this.toolStripMenuItem2,
             this.fromDBToolStripMenuItem});
             this.cmsFrom.Name = "cmsFrom";
-            this.cmsFrom.Size = new System.Drawing.Size(133, 48);
+            this.cmsFrom.Size = new System.Drawing.Size(132, 48);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
-            this.toolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
+            this.toolStripMenuItem2.Size = new System.Drawing.Size(131, 22);
             this.toolStripMenuItem2.Text = "From Excel";
             this.toolStripMenuItem2.Click += new System.EventHandler(this.toolStripMenuItem2_Click);
+            // 
+            // fromDBToolStripMenuItem
+            // 
+            this.fromDBToolStripMenuItem.Name = "fromDBToolStripMenuItem";
+            this.fromDBToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
+            this.fromDBToolStripMenuItem.Text = "From DB";
+            this.fromDBToolStripMenuItem.Click += new System.EventHandler(this.fromDBToolStripMenuItem_Click);
             // 
             // button2
             // 
@@ -110,28 +118,35 @@
             this.toXMLFileToolStripMenuItem,
             this.toDBToolStripMenuItem});
             this.cmsTo.Name = "contextMenuStrip1";
-            this.cmsTo.Size = new System.Drawing.Size(181, 114);
+            this.cmsTo.Size = new System.Drawing.Size(137, 92);
             // 
             // toCSVFileToolStripMenuItem
             // 
             this.toCSVFileToolStripMenuItem.Name = "toCSVFileToolStripMenuItem";
-            this.toCSVFileToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.toCSVFileToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.toCSVFileToolStripMenuItem.Text = "To CSV file";
             this.toCSVFileToolStripMenuItem.Click += new System.EventHandler(this.toCSVFileToolStripMenuItem_Click);
             // 
             // toExcelToolStripMenuItem
             // 
             this.toExcelToolStripMenuItem.Name = "toExcelToolStripMenuItem";
-            this.toExcelToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.toExcelToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.toExcelToolStripMenuItem.Text = "To Excel file";
             this.toExcelToolStripMenuItem.Click += new System.EventHandler(this.toExcelToolStripMenuItem_Click);
             // 
             // toXMLFileToolStripMenuItem
             // 
             this.toXMLFileToolStripMenuItem.Name = "toXMLFileToolStripMenuItem";
-            this.toXMLFileToolStripMenuItem.Size = new System.Drawing.Size(135, 22);
+            this.toXMLFileToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.toXMLFileToolStripMenuItem.Text = "To XML file";
             this.toXMLFileToolStripMenuItem.Click += new System.EventHandler(this.toXMLFileToolStripMenuItem_Click);
+            // 
+            // toDBToolStripMenuItem
+            // 
+            this.toDBToolStripMenuItem.Name = "toDBToolStripMenuItem";
+            this.toDBToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.toDBToolStripMenuItem.Text = "To DB";
+            this.toDBToolStripMenuItem.Click += new System.EventHandler(this.toDBToolStripMenuItem_Click);
             // 
             // gcEDocs
             // 
@@ -181,6 +196,7 @@
             // 
             // lblCount
             // 
+            this.lblCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.lblCount.Location = new System.Drawing.Point(640, 1);
             this.lblCount.Name = "lblCount";
             this.lblCount.Size = new System.Drawing.Size(142, 15);
@@ -292,25 +308,23 @@
             this.label1.Size = new System.Drawing.Size(149, 23);
             this.label1.TabIndex = 5;
             // 
-            // fromDBToolStripMenuItem
+            // btnClear
             // 
-            this.fromDBToolStripMenuItem.Name = "fromDBToolStripMenuItem";
-            this.fromDBToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.fromDBToolStripMenuItem.Text = "From DB";
-            this.fromDBToolStripMenuItem.Click += new System.EventHandler(this.fromDBToolStripMenuItem_Click);
-            // 
-            // toDBToolStripMenuItem
-            // 
-            this.toDBToolStripMenuItem.Name = "toDBToolStripMenuItem";
-            this.toDBToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.toDBToolStripMenuItem.Text = "To DB";
-            this.toDBToolStripMenuItem.Click += new System.EventHandler(this.toDBToolStripMenuItem_Click);
+            this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnClear.Location = new System.Drawing.Point(251, 353);
+            this.btnClear.Name = "btnClear";
+            this.btnClear.Size = new System.Drawing.Size(75, 23);
+            this.btnClear.TabIndex = 10;
+            this.btnClear.Text = "Clear";
+            this.btnClear.UseVisualStyleBackColor = true;
+            this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
             // 
             // FormCorrector
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(797, 381);
+            this.Controls.Add(this.btnClear);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.label2);
@@ -363,6 +377,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ToolStripMenuItem fromDBToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toDBToolStripMenuItem;
+        private System.Windows.Forms.Button btnClear;
     }
 }
 

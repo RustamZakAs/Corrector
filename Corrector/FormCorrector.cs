@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -8,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Corrector.Properties;
+using Dapper;
 using ExcelDataReader;
 
 namespace Corrector
@@ -95,6 +97,7 @@ namespace Corrector
 
         private void button3_Click(object sender, EventArgs e)
         {
+            if (edocs == null || edocs.Count <= 0) return;
             _ = Task.Run(() =>
             {
                 IsRunning = true;
@@ -333,7 +336,7 @@ namespace Corrector
                         gcEDocs.DataSource = edocs;
                         gcEDocs.RefreshDataSource();
                         lblCount.Text = "Sətir sayı: " + edocs.Count.ToString();
-                        button1.Enabled = true;
+                        this.button1.Enabled = true;
                         IsRunning = false;
                         MessageBox.Show(this, Text + " yüklənməsi sona çatdı!", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     }
@@ -353,38 +356,40 @@ namespace Corrector
 
         private void toXMLFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (this.tbTIN.Text.Length != 10)
+            try
             {
-                this.panel1.Visible = true;
-                this.tbTIN.Focus();
-                MessageBox.Show("VÖEN səhfdir!");
-            }
-            int.TryParse(this.tbYear.Text, out int year);
-            if (this.tbYear.Text.Length != 4 || year <= 2010)
-            {
-                this.panel1.Visible = true;
-                this.tbYear.Focus();
-                MessageBox.Show("İl səhfdir!");
-            }
-            if (this.cbeMonth.SelectedIndex < 0)
-            {
-                this.panel1.Visible = true;
-                this.cbeMonth.Focus();
-                MessageBox.Show("Ay seçilməyib!");
-            }
-            string main = string.Empty;
-            string hat = Resources.Hat;
-            main += hat;
-            main += "\n<product>";
-            main += "\n<voen>" + this.tbTIN.Text + "</voen>";
-            main += "\n<dovr>" + year.ToString() + (this.cbeMonth.SelectedIndex + 1).ToString("00") + year.ToString() + (this.cbeMonth.SelectedIndex + 1).ToString("00") + "</dovr>";
-            main += "\n<ma></ma>";
-            main += "\n<mk></mk>";
-            main += "\n\t\t<vhfEVEZTable>\n";
-            int counter = 0;
-            foreach (EDoc item in edocs)
-            {
-                main += "\t\t\t" + $@"<row no = '{counter++}'>
+                if (this.tbTIN.Text.Length != 10)
+                {
+                    this.panel1.Visible = true;
+                    this.tbTIN.Focus();
+                    MessageBox.Show("VÖEN səhfdir!");
+                }
+                int.TryParse(this.tbYear.Text, out int year);
+                if (this.tbYear.Text.Length != 4 || year <= 2010)
+                {
+                    this.panel1.Visible = true;
+                    this.tbYear.Focus();
+                    MessageBox.Show("İl səhfdir!");
+                }
+                if (this.cbeMonth.SelectedIndex < 0)
+                {
+                    this.panel1.Visible = true;
+                    this.cbeMonth.Focus();
+                    MessageBox.Show("Ay seçilməyib!");
+                }
+                string main = string.Empty;
+                string hat = Resources.Hat;
+                main += hat;
+                main += "\n<product>";
+                main += "\n<voen>" + this.tbTIN.Text + "</voen>";
+                main += "\n<dovr>" + year.ToString() + (this.cbeMonth.SelectedIndex + 1).ToString("00") + year.ToString() + (this.cbeMonth.SelectedIndex + 1).ToString("00") + "</dovr>";
+                main += "\n<ma></ma>";
+                main += "\n<mk></mk>";
+                main += "\n\t\t<vhfEVEZTable>\n";
+                int counter = 0;
+                foreach (EDoc item in edocs)
+                {
+                    main += "\t\t\t" + $@"<row no = '{counter++}'>
 				               <ser>{item.Serial}</ser>
 				               <nom>{item.Number}</nom>
 				               <date>{item.Date.Day.ToString("00")}{item.Date.Month.ToString("00")}{item.Date.Year}</date>
@@ -396,31 +401,147 @@ namespace Corrector
 				               <oMeb>{Math.Round(item.PayMain, 2).ToString().Replace(",", ".")}</oMeb>
 				               <oEdv>{Math.Round(item.PayVAT, 2).ToString().Replace(",", ".")}</oEdv>
 			               </row>";
+                }
+                main += "\n\t\t</vhfEVEZTable>";
+                main += "\n\t</product>";
+                main += "\n</root>";
+
+                string fileName = $@"C_VHF_EVEZ_1_{this.tbTIN.Text}_{DateTime.Now.ToString("yyyyMMdd")}_v_205_{Guid.NewGuid().ToString("N").Substring(0, 4)}.xml";
+                string location = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                string customExcelSavingPath = location + "\\" + fileName;
+
+                File.WriteAllText(customExcelSavingPath, main);
             }
-            main += "\n\t\t</vhfEVEZTable>";
-            main += "\n\t</product>";
-            main += "\n</root>";
-
-            string fileName = $@"C_VHF_EVEZ_1_{this.tbTIN.Text}_{DateTime.Now.ToString("yyyyMMdd")}_v_205_{Guid.NewGuid().ToString("N").Substring(0, 4)}.xml";
-            string location = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            string customExcelSavingPath = location + "\\" + fileName;
-
-            File.WriteAllText(customExcelSavingPath, main);
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex?.Message + "\n" + ex?.InnerException?.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+                throw;
+            }
+            finally
+            {
+                System.GC.Collect();
+            }
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            panel1.Visible = !panel1.Visible;
+            this.panel1.Visible = !this.panel1.Visible;
         }
 
         private void fromDBToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            int year = Convert.ToInt32(this.tbYear.Text);
+            int month = this.cbeMonth.SelectedIndex;
 
+            try
+            {
+                string sql = $@"SELECT p.*, (SELECT TOP 1 Ad FROM Voen WITH(NOLOCK) WHERE [Voen] = p.Voen) AS Name
+                                FROM [Evhf_paid] p WITH(NOLOCK) 
+                                WHERE p.Il = {year} 
+                                  AND p.Tip = 0
+                                  AND p.AyRub = {month}
+                                  AND p.Evezlesen = N'Y';";
+                //using (var connection = new SqlConnection(Corrector.Properties.Resources.ConnectingString1098))
+                using (var connection = new SqlConnection(Corrector.Properties.Resources.ConnectingString1020))
+                {
+                    List<dynamic> list = connection.Query<dynamic>(sql).ToList();
+                    foreach (var item in list)
+                    {
+                        EDoc edoc = new EDoc();
+                        edoc.TIN = item.Voen;
+                        edoc.Name = item.Name;
+                        edoc.Date = item.Tarix;
+                        edoc.Serial = item.Evhf_sr;
+                        edoc.Number = item.Evhf_no;
+                        edoc.RowCode = item.Setir_kod;
+                        edoc.PayMain = item.Edvsiz;
+                        edoc.PayVAT = item.Edv;
+                        edoc.PaySum = edoc.PayMain + edoc.PayVAT;
+
+                        //list.Il;
+                        //list.Tip;
+                        //list.AyRub;
+                        //list.Evezlesen;
+                        //list.Line_id;
+                        //list.LastEditDateTime;
+                        //list.LastEditCompName;
+                        //list.LastEditUserName;
+                        edocs.Add(edoc);
+                    }
+
+                    gcEDocs.DataSource = edocs;
+                    gcEDocs.RefreshDataSource();
+                    lblCount.Text = "Sətir sayı: " + edocs.Count.ToString();
+                    this.button1.Enabled = true;
+                    IsRunning = false;
+                    MessageBox.Show(this, Text + " yüklənməsi sona çatdı!", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex?.Message + "\n" + ex?.InnerException?.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+                throw;
+            }
+            finally
+            {
+                System.GC.Collect();
+            }
         }
 
         private void toDBToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            int year = Convert.ToInt32(this.tbYear.Text);
+            int month = this.cbeMonth.SelectedIndex;
 
+            try
+            {
+                string sql = string.Empty;
+
+                //using (var connection = new SqlConnection(Corrector.Properties.Resources.ConnectingString1098))
+                using (var connection = new SqlConnection(Corrector.Properties.Resources.ConnectingString1020))
+                {
+                    connection.Open();
+                    foreach (EDoc item in edocs)
+                    {
+                        if (item.Corrected)
+                        {
+                            sql = $@"UPDATE [Evhf_paid] SET [Edvsiz] = @PayMain
+                                     WHERE Il = {year} 
+                                       AND Tip = 0
+                                       AND AyRub = {month}
+                                       AND Setir_kod = @RowCode
+                                       AND Evhf_sr = @Serial
+                                       AND Evhf_no = @Number
+                                       AND Voen = @TIN
+                                       AND Evezlesen = N'Y';";
+                            int result = connection.Execute(sql, item);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(this, ex?.Message + "\n" + ex?.InnerException?.Message, Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+                throw;
+            }
+            finally
+            {
+                System.GC.Collect();
+            }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            IsRunning = true;
+            edocs = new List<EDoc>();
+            gcEDocs.DataSource = edocs;
+            gcEDocs.RefreshDataSource();
+            lblCount.Text = "Sətir sayı: " + edocs.Count.ToString();
+            this.button1.Enabled = true;
+            IsRunning = false;
         }
     }
 }

@@ -61,6 +61,24 @@ namespace Corrector.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Data Source=192.168.10.20;User ID=TradeConnection; Password=comtekbm; Initial Catalog=Trade;Integrated Security=False; Connect Timeout=3600;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False.
+        /// </summary>
+        internal static string ConnectingString1020 {
+            get {
+                return ResourceManager.GetString("ConnectingString1020", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data Source=192.168.10.98;User ID=TradeConnection; Password=comtekbm; Initial Catalog=Trade;Integrated Security=False; Connect Timeout=3600;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False.
+        /// </summary>
+        internal static string ConnectingString1098 {
+            get {
+                return ResourceManager.GetString("ConnectingString1098", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
         ///&lt;root version =&quot;205&quot; kod=&quot;VHF_EVEZ_1&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xsi:noNamespaceSchemaLocation=&quot;VHF_EVEZ_1.xsd&quot; &gt;.
         /// </summary>
