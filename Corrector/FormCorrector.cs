@@ -83,30 +83,31 @@ namespace Corrector
 
             gcEDocs.DataSource = new List<EDoc>();
 
-            DevExpress.XtraGrid.Columns.GridColumn col = gridView1.Columns.ToList().FirstOrDefault(x => x.FieldName == nameof(EDoc.ToStringCSV));
+            DevExpress.XtraGrid.Columns.GridColumn col = gvEDocs.Columns.ToList().FirstOrDefault(x => x.FieldName == nameof(EDoc.ToStringCSV));
             if (col != null) col.Visible = false;
-            col = gridView1.Columns.ToList().FirstOrDefault(x => x.FieldName == nameof(EDoc.ToStringColumnsCSV));
+            col = gvEDocs.Columns.ToList().FirstOrDefault(x => x.FieldName == nameof(EDoc.ToStringColumnsCSV));
             if (col != null) col.Visible = false;
         }
 
         List<EDoc> edocs = new List<EDoc>();
+        public SqlConnection sqlCon { get; set; } = new SqlConnection();
 
         private void Form1_Resize(object sender, EventArgs e)
         {
-            button3.Left = (Width / 2) - button3.Width;
+            btnCorrect.Left = (Width / 2) - btnCorrect.Width;
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void btnCorrect_Click(object sender, EventArgs e)
         {
             if (edocs == null || edocs.Count <= 0) return;
             _ = Task.Run(() =>
             {
                 IsRunning = true;
 
-                if (!button3.InvokeRequired)
-                    button3.Enabled = false;
+                if (!btnCorrect.InvokeRequired)
+                    btnCorrect.Enabled = false;
                 else
-                    button3.Invoke(new Action(() => { button3.Enabled = false; }));
+                    btnCorrect.Invoke(new Action(() => { btnCorrect.Enabled = false; }));
 
                 decimal sum = 0M;
                 if (this.nudSum.Value == 0)
@@ -127,10 +128,10 @@ namespace Corrector
                     }
                 }
                 gcEDocs.RefreshDataSource();
-                if (!button3.InvokeRequired)
-                    button3.Enabled = true;
+                if (!btnCorrect.InvokeRequired)
+                    btnCorrect.Enabled = true;
                 else
-                    button3.Invoke(new Action(() => { button3.Enabled = true; }));
+                    btnCorrect.Invoke(new Action(() => { btnCorrect.Enabled = true; }));
                 IsRunning = false;
                 MessageBox.Show(Text + " düzəliş sona çatdı!", Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             });
@@ -140,7 +141,7 @@ namespace Corrector
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                cmsTo.Show(Cursor.Position);
+                this.cmsTo.Show(Cursor.Position);
             }
         }
 
@@ -152,7 +153,7 @@ namespace Corrector
                 {
                     IsRunning = true;
 
-                    if (!button3.InvokeRequired)
+                    if (!btnCorrect.InvokeRequired)
                         button2.Enabled = false;
                     else
                         button2.Invoke(new Action(() => { button2.Enabled = false; }));
@@ -170,7 +171,7 @@ namespace Corrector
                         }
                     }
 
-                    if (!button3.InvokeRequired)
+                    if (!btnCorrect.InvokeRequired)
                         button2.Enabled = true;
                     else
                         button2.Invoke(new Action(() => { button2.Enabled = true; }));
@@ -222,7 +223,7 @@ namespace Corrector
                 try
                 {
                     IsRunning = true;
-                    if (!button3.InvokeRequired)
+                    if (!btnCorrect.InvokeRequired)
                         button2.Enabled = false;
                     else
                         button2.Invoke(new Action(() => { button2.Enabled = false; }));
@@ -233,7 +234,7 @@ namespace Corrector
 
                     ExcelExport.GenerateExcel(ConvertToDataTable(edocs), customExcelSavingPath);
 
-                    if (!button3.InvokeRequired)
+                    if (!btnCorrect.InvokeRequired)
                         button2.Enabled = true;
                     else
                         button2.Invoke(new Action(() => { button2.Enabled = true; }));
@@ -251,7 +252,7 @@ namespace Corrector
         {
             if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
-                cmsFrom.Show(Cursor.Position);
+                this.cmsFrom.Show(Cursor.Position);
             }
         }
 
@@ -452,9 +453,10 @@ namespace Corrector
                                   AND p.Tip = 0
                                   AND p.AyRub = {month}
                                   AND p.Evezlesen = N'Y';";
-                //using (var connection = new SqlConnection(Corrector.Properties.Resources.ConnectingString1098))
-                using (var connection = new SqlConnection(Corrector.Properties.Resources.ConnectingString1020))
+
+                using (var connection = sqlCon)
                 {
+                    connection.Open();
                     List<dynamic> list = connection.Query<dynamic>(sql).ToList();
                     foreach (var item in list)
                     {
@@ -512,8 +514,7 @@ namespace Corrector
             {
                 string sql = string.Empty;
 
-                //using (var connection = new SqlConnection(Corrector.Properties.Resources.ConnectingString1098))
-                using (var connection = new SqlConnection(Corrector.Properties.Resources.ConnectingString1020))
+                using (var connection = sqlCon)
                 {
                     connection.Open();
                     foreach (EDoc item in edocs)
@@ -560,6 +561,14 @@ namespace Corrector
         private void gcEDocs_Click(object sender, EventArgs e)
         {
             this.panel1.Visible = false;
+        }
+
+        private void comboBoxEdit1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBoxEdit1.SelectedIndex == 0)
+                sqlCon = new SqlConnection(Corrector.Properties.Resources.ConnectingString1020);
+            if (comboBoxEdit1.SelectedIndex == 1)
+                sqlCon = new SqlConnection(Corrector.Properties.Resources.ConnectingString1098);
         }
     }
 }
